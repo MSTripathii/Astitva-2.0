@@ -19,7 +19,12 @@ import SignUp from './Authentication/SignUp'
 import DefaultLayout from "./layouts/DefaultLayout";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import Chatbot from './Components/Chatbot'
-
+import UserDashboard from './Components/Dashboard'
+import Joincummunity from './Components/Joincummunity'
+import Dashboardshelter from './Components/DashboardShelter'
+import OwnerLogin from './Authentication/ownerlogin'
+import OwnerSignup from './Authentication/ownersignup'
+import AddShelterForm from './Components/Shelterform'
 
 function App() {
 
@@ -34,7 +39,7 @@ function App() {
       <Navbar />
 
       {/* Main content container, set it to flex-grow to take up available space */}
-      <div className="lg:mx-20 mx-5 mb-32 flex-grow">
+      <div className="  mb-32 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/team" element={<Team />} />
@@ -44,9 +49,14 @@ function App() {
           <Route path="/donate" element={<Donate />} />
           <Route path="/form" element={<Form />} />
           <Route path="/shelters" element={<Shelters />} />
-          {/* <Route path='/login' element={<Login/>}></Route> */}
-          {/* <Route path='/signup' element={<SignUp/>}></Route> */}
-
+          <Route path='/login' element={<Login/>}></Route>
+          <Route path='/signup' element={<SignUp/>}></Route>
+          <Route path='/dashboard' element={<UserDashboard/>}></Route>
+          <Route path='/dashboardshelter' element={<Dashboardshelter/>}></Route>
+          <Route path='/Joincummunity' element={<Joincummunity/>}></Route>
+          <Route path="/ownerlogin" element={<OwnerLogin />} />
+            <Route path="/ownersignup" element={<OwnerSignup />} />
+            <Route path="/ShelterForm" element={<AddShelterForm />} />
           {/* Default Layout Routes */}
           <Route element={<DefaultLayout />}>
             <Route path="/login" element={<Login />} />

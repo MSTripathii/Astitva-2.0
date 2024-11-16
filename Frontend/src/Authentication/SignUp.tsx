@@ -1,33 +1,32 @@
+import React, { useState } from 'react';
 import { Avatar, Box, Button, Container, CssBaseline, Grid, TextField, Typography } from "@mui/material";
-import { LockOutlined } from "@mui/icons-material";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../api/axiosInstance";
-import '../index.css';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../api/axiosInstance';
+import { LockOutlined } from '@mui/icons-material';
 
 const SignUp = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // to redirect after successful registration
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
-      const response = await axiosInstance.post("/register", { name, email, password });
-      console.log("Registration successful:", response.data);
-      localStorage.setItem("userInfo", JSON.stringify(response.data));
-      navigate("/dashboard"); // redirect after successful registration
+      const response = await axiosInstance.post('/register/signup', { name, email, password });
+      localStorage.setItem('userInfo', JSON.stringify(response.data));
+      navigate('/dashboard');
     } catch (error) {
-      console.error("Registration failed:", error);
-      alert("Registration failed, please try again.");
+      console.error(error);
+      alert(error.response?.data.message || 'Registration failed, please try again.');
     }
   };
 
   return (
+    <>
     <Container className="" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
+       <CssBaseline />
+       <Box
+         sx={{
           mt: 10,
           display: "flex",
           flexDirection: "column",
@@ -123,6 +122,7 @@ const SignUp = () => {
         </Box>
       </Box>
     </Container>
+    </>
   );
 };
 

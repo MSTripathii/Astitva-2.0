@@ -70,15 +70,15 @@ dotenv.config();
 
 export const getChatResponse = async (req: Request, res: Response): Promise<void> => {
     const userMessage: string = req.body.message;
-
+    // console.log(userMessage);
     try {
         // Ensure the API key is correctly set
-        const apiKey = process.env.GENAI_API_KEY;
-        if (!apiKey) {
-            throw new Error("API key is missing");
-        }
+        const apiKey = "AIzaSyCXL98QXpc0ltzWQekEN108UyUAd0eZr1g";
+        // if (!apiKey) {
+        //     throw new Error("API key is missing");
+        // }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
+        const genAI = new GoogleGenerativeAI("AIzaSyCXL98QXpc0ltzWQekEN108UyUAd0eZr1g");
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const result = await model.generateContent(userMessage);

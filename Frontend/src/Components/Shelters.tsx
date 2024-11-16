@@ -1,55 +1,134 @@
-import React from 'react'
-import { Search } from 'lucide-react'
-import { shelters } from '../Constant/Common'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Search } from "lucide-react";
 
-const Shelters = () => {
-  return (
-    <div className='flex flex-col justify-center items-center w-full h-full'>
-      <div className="w-full flex justify-center">
-        <input type="text" className='text-center p-2 lg:w-1/3 md:w-1/2 bg-teal-300 rounded-lg border-4 border-white text-black font-bold text-lg lg:my-20 my-10 placeholder:text-black' placeholder='Enter your Location' />
-        <button className='ml-4'>{<Search className='w-10 h-10' />}</button>
-      </div>
-      <div className="flex w-full lg:flex-row flex-col">
-
-        <div className="lg:w-[30%]">
-          <h1 className='text-center text-5xl'>Places we have Shelters</h1>
-          <ul className='mt-10 flex items-center flex-col lg:items-start lg:ml-16 my-5'>
-            <li className='text-2xl m-2'><a href="">Need Help in KANPUR</a></li>
-            <li className='text-2xl m-2'><a href="">Need Help in NAGPUR</a></li>
-            <li className='text-2xl m-2 '><a href="">Need Help in MUMBAI</a></li>
-            <li className='text-2xl m-2 '><a href="">Need Help in DELHI</a></li>
-            <li className='text-2xl m-2'><a href="">Need Help in BANGLORE</a></li>
-          </ul>
-        </div>
-
-        <div className="lg:w-[60%]">
-          {
-            shelters.map((data, index) => (
-              <a href="" key={index} className=''>
-                <div className="flex border-white lg:mb-10 mb-5 border p-4 flex-col md:flex-row justify-center md:items-center lg:justify-normal">
-                <img src={data.src} alt="logo" className='h-1/2 md:w-1/3' />
-                <div className="flex flex-col mt-5 justify-center lg:ml-16">
-                  <h1 className='text-[15px] mb-1 ml-5 lg:text-xl'><span className='text-lg lg:text-3xl md:mr-1'>Name:</span> {data.shelter_name}</h1>
-                  <h1 className='text-[15px] mb-1 ml-5 lg:text-xl'><span className='text-lg lg:text-3xl md:mr-1'>Location:</span> {data.Location}</h1>
-                  <h1 className='text-[15px] mb-1 ml-5 lg:text-xl'><span className='text-lg lg:text-3xl md:mr-1'>Contact:</span> {data.Contact}</h1>
-                  <h1 className='text-[15px] mb-1 ml-5 lg:text-xl'><span className='text-lg lg:text-3xl md:mr-1'>Active/Inactive:</span> <span className='text-teal-300'>{data.Active_Inactive}</span></h1>
-                  <h1 className='text-[15px] mb-1 ml-5 lg:text-xl'><span className='text-lg lg:text-3xl md:mr-1'>Ratings:</span> {data.Ratings}</h1>
-                </div>
-                
-                <div className="flex flex-col justify-center md:w-[20%] lg:ml-10">
-                  <h1 className='text-center my-3  font-bold text-2xl lg:text-6xl lg:mb-10'><span className='bg-gradient-to-r from-teal-200 to-teal-600 text-transparent bg-clip-text'>Slogan</span></h1>
-                  <p className='text-center md:text-lg lg:text-3xl'>{data.slogan}</p>
-                  </div>
-              </div>
-              </a>
-            ))
-          }
-        </div>
-
-
-      </div>
-    </div>
-  )
+interface Shelter {
+  shelter_name: string;
+  location: string;
+  contact: string;
+  active_inactive: string;
+  ratings: number;
+  src?: string; // Optional property if not all shelters have an image
+  slogan?: string; // Optional property if not all shelters have a slogan
 }
 
-export default Shelters
+const Shelters = () => {
+  // const [shelters, setShelters] = useState([]);
+  const [shelters, setShelters] = useState<Shelter[]>([]);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce logic for search input
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300); // Adjust delay as needed
+    return () => clearTimeout(delayDebounce);
+  }, [search]);
+
+  // Fetch shelters based on debounced search term
+  useEffect(() => {
+    const fetchShelters = async () => {
+      try {
+        const res = debouncedSearch
+          ? await axios.get(
+              `http://localhost:8000/register/search?location=${debouncedSearch}`
+            )
+          : await axios.get("http://localhost:8000/register/all");
+        console.log("API Response:", res.data);
+        setShelters(res.data);
+      } catch (error) {
+        console.error("Error fetching shelters:", error);
+      }
+    };
+    fetchShelters();
+  }, [debouncedSearch]);
+
+  return (
+    <div className="min-h-screen bg-gray-500 p-12">
+      {/* Search Bar */}
+      <div className="flex justify-center items-center mb-6">
+  <div className="relative w-[100vw] max-w-md flex">
+    <input
+      type="text"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search shelters by location..."
+      className="w-96 p-4  border border-gray-300 rounded-l-lg shadow-sm text-lg focus:outline-none focus:ring focus:ring-teal-300"
+    />
+    <button
+      title="Search"
+      className="bg-teal-500  text-white p-3  rounded-r-lg hover:bg-teal-600 transition-all duration-300 ease-in-out flex items-center justify-center text-lg"
+    >
+      Search<Search className="ml-6 w-5 h-5" />
+    </button>
+  </div>
+</div>
+
+
+      {/* Shelter List */}
+      <div className="flex flex-col gap-6 px-40 ">
+        {shelters.length > 0 ? (
+          shelters.map((shelter, index) => (
+            <div
+              key={index}
+              className="bg-black border rounded-3xl h-[20rem] shadow-md hover:shadow-lg transition duration-200 p-9"
+            >
+              <div className="flex flex-col md:flex-row items-center">
+                {/* Logo on the left */}
+                <div className="flex-shrink-0 ">
+                  <img
+                    src={shelter.src}
+                    alt="Shelter Logo"
+                    className="w-[15rem] h-[15rem] object-cover rounded-full"
+                  />
+                </div>
+
+                {/* Shelter Details in the middle */}
+                <div className="flex flex-col justify-center w-[40%]  ml-[5rem]">
+                  <h1 className="text-3xl font-bold text-teal-400 mb-2">
+                    {shelter.shelter_name}
+                  </h1>
+                  <p className="text-xl text-gray-200">
+                    <strong>Location:</strong> {shelter.location}
+                  </p>
+                  <p className="text-xl text-gray-200">
+                    <strong>Contact:</strong> {shelter.contact}
+                  </p>
+                  <p className="text-xl text-gray-200">
+                    <strong>Status:</strong> {shelter.active_inactive}
+                  </p>
+                  <p className="text-xl text-gray-200">
+                    <strong>Ratings:</strong> {shelter.ratings}/5
+                  </p>
+                  <p className="text-xl flex-wrap text-gray-100 italic mt-2">
+                    "{shelter.slogan}"
+                  </p>
+                </div>
+
+                {/* Map iframe on the right */}
+                <div className="flex-shrink-0 ">
+                  <iframe  
+                  className="w-[33rem] h-[15rem] ml-2 rounded-lg"                 
+                    title="Google Map"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28580.70340676968!2d80.23307383060461!3d26.436771368208582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399c47aaaa460ecd%3A0x509aaf4ca1259442!2sAnimal%20Shelter%20Kanpur!5e0!3m2!1sen!2sin!4v1731536134170!5m2!1sen!2sin"
+                    loading="eager"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full text-6xl mt-[5rem] text-center text-black">
+            No shelters found.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Shelters;
