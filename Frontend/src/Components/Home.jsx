@@ -15,7 +15,7 @@ import BackgroundLines from "./ui/background-lines";
 const Home = () => {
   return (
     <>
-      <div className="h-screen md:mx-10">
+      <div className="h-screen">
         <BackgroundLines>
           <div className="" id="home">
             <div className="mt-14 md:mt-20 flex flex-col justify-center">

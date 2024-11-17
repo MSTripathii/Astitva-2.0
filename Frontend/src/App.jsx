@@ -39,7 +39,7 @@ function App() {
       <Navbar />
 
       {/* Main content container, set it to flex-grow to take up available space */}
-      <div className="  mb-32 flex-grow">
+      <div className="md:my-10 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/team" element={<Team />} />
